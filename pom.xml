@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>net.wimpi.crowd.ldap</groupId>
+    <artifactId>crowd-ldap-server</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>Crowd-LDAP-Server</name>
+    <url>http://dieter.wimpi.net/</url>
+    <description>LDAP Server Bridge for Crowd</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <slf4j-version>1.6.6</slf4j-version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.directory.server</groupId>
+            <artifactId>apacheds-all</artifactId>
+            <version>1.5.7</version>
+            <exclusions>
+                <!-- shared-ldap-schema module needs to be excluded to avoid multiple schema resources on the classpath-->
+                <exclusion>
+                    <groupId>org.apache.directory.shared</groupId>
+                    <artifactId>shared-ldap-schema</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.crowd</groupId>
+            <artifactId>crowd-integration-client-rest</artifactId>
+            <version>2.3.6</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.3.2</version>
+                    <configuration>
+                        <source>1.6</source>
+                        <target>1.6</target>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>1.7.1</version>
+                    <configuration>
+                        <!-- put your configurations here -->
+                        <transformers>
+                            <transformer
+                                    implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <mainClass>net.wimpi.crowd.ldap.CrowdLDAPServer</mainClass>
+                            </transformer>
+                            <transformer
+                                    implementation="org.apache.maven.plugins.shade.resource.IncludeResourceTransformer">
+                                <resource>META-INF/CROWDLDAPSERVER_LICENSE.txt</resource>
+                                <file>LICENSE.txt</file>
+                            </transformer>
+                            <transformer
+                                    implementation="org.apache.maven.plugins.shade.resource.IncludeResourceTransformer">
+                                <resource>META-INF/CROWDLDAPSERVER_NOTICE.txt</resource>
+                                <file>NOTICE.txt</file>
+                            </transformer>
+                        </transformers>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>shade</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>atlassian-content</id>
+            <url>https://maven.atlassian.com/content/groups/public/</url>
+        </repository>
+    </repositories>
+
+</project>
