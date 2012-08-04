@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A partition that bridges to the CrowdClient/Crowd REST interface.
@@ -60,6 +62,7 @@ public class CrowdPartition implements Partition {
   private CrowdClient m_CrowdClient;
 
   private List<ServerEntry> m_CrowdOneLevelList;
+  private Pattern m_UIDFilter = Pattern.compile("\\(0.9.2342.19200300.100.1.1=([^\\)]*)\\)");
 
   public CrowdPartition(CrowdClient client) {
     m_CrowdClient = client;
@@ -298,8 +301,9 @@ public class CrowdPartition implements Partition {
             dn
         );
         userEntry.put(SchemaConstants.OBJECT_CLASS, SchemaConstants.INET_ORG_PERSON_OC);
-        userEntry.put(SchemaConstants.OBJECT_CLASS_AT, SchemaConstants.TOP_OC, SchemaConstants.ORGANIZATIONAL_UNIT_OC);
+        userEntry.put(SchemaConstants.OBJECT_CLASS_AT, SchemaConstants.TOP_OC, SchemaConstants.ORGANIZATIONAL_PERSON_OC, SchemaConstants.PERSON_OC, SchemaConstants.INET_ORG_PERSON_OC);
         userEntry.put(SchemaConstants.CN_AT, u.getDisplayName());
+        userEntry.put(SchemaConstants.UID_AT,user);
         userEntry.put("mail", u.getEmailAddress());
         userEntry.put("givenname", u.getFirstName());
         userEntry.put(SchemaConstants.SN_AT, u.getLastName());
@@ -435,11 +439,19 @@ public class CrowdPartition implements Partition {
     //3. Users
     if (dn.getName().equals(m_CrowdUsersEntry.getDn().getName())) {
       //Retrieve Filter
-      if (ctx.getFilter().toString().contains("(2.5.4.0=*)")) {
+      String filter = ctx.getFilter().toString();
+      if (filter.contains("(2.5.4.0=*)") ||  filter.contains("(2.5.4.0=referral)")) {
+
+
+        Matcher m = m_UIDFilter.matcher(filter);
+        String uid = "";
+        if (m.find()) {
+          uid=m.group(1);
+        }
 
         List<ServerEntry> l = new ArrayList<ServerEntry>();
         try {
-          TermRestriction userName = new TermRestriction(UserTermKeys.USERNAME, MatchMode.CONTAINS, "");
+          TermRestriction userName = new TermRestriction(UserTermKeys.USERNAME, MatchMode.CONTAINS, uid);
           List<String> list = m_CrowdClient.searchUserNames(userName, 0, Integer.MAX_VALUE);
           for (String gn : list) {
             DN udn = new DN(String.format("dn=%s,%s", gn, CROWD_USERS_DN));
@@ -463,13 +475,8 @@ public class CrowdPartition implements Partition {
     DN dn = ctx.getDn();
 
     log.debug("findSubTree()::dn=" + dn.getName());
-
-    BaseEntryFilteringCursor cursor = findOneLevel(ctx);
-    if(cursor.iterator().hasNext()) {
-      return cursor;
-    }
-    // return an empty result
-    return new BaseEntryFilteringCursor(new EmptyCursor<ServerEntry>(), ctx);
+    //Will only search at one level
+    return findOneLevel(ctx);
   }//findSubTree
 
   public EntryFilteringCursor search(SearchOperationContext ctx)
@@ -500,10 +507,12 @@ public class CrowdPartition implements Partition {
   }//search
 
   public EntryFilteringCursor list(ListOperationContext opContext) {
+    log.debug("list()::opContext=" + opContext.toString());
     return null;
   }//list
 
   public ClonedServerEntry lookup(Long id) {
+    log.debug("lookup::id=" + id.toString());
     return null;
   }//lookup
 

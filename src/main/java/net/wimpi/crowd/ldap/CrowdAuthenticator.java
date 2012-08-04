@@ -34,7 +34,6 @@ public class CrowdAuthenticator extends AbstractAuthenticator {
     String user = ctx.getDn().getRdn(2).getNormValue();
     String pass = new String(ctx.getCredentials(),"utf-8");
 
-    //log.debug("user=" + user + "::pass=" + pass);
     try {
       User u = m_CrowdClient.authenticateUser(user, pass);
       if(u == null) {
