@@ -264,12 +264,18 @@ public class CrowdPartition implements Partition {
           log.error("hasEntry()", ex);
         }
         log.debug("Prefix=" + prefix);
-        if (isCrowdGroups(prefix) || isCrowdUsers(prefix)) {
+        if (isCrowdUsers(prefix)) {
           RDN rdn = dn.getRdn(2);
           String user = rdn.getNormValue();
           log.debug("user=" + user);
           ServerEntry userEntry = createUserEntry(dn);
           return (userEntry != null);
+        } else if(isCrowdGroups(prefix)) {
+          RDN rdn = dn.getRdn(2);
+          String group = rdn.getNormValue();
+          log.debug("group=" + group);
+          ServerEntry groupEntry = createGroupEntry(dn);
+          return (groupEntry != null);        
         } else {
           log.debug("Prefix is neither users nor groups");
           log.debug("Crowd Users = " + m_CrowdUsersEntry.getDn());
