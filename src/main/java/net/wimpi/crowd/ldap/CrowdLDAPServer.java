@@ -258,7 +258,7 @@ public class CrowdLDAPServer {
 
     Transport t = new TcpTransport(serverPort);
 
-    boolean sslEnabled = Boolean.getBoolean(srvConfig.getProperty(CONFIG_KEY_SSLENABLE,"false"));
+    boolean sslEnabled = Boolean.parseBoolean(srvConfig.getProperty(CONFIG_KEY_SSLENABLE,"false"));
 
     if(sslEnabled) {
       String keyStore = srvConfig.getProperty(CONFIG_KEY_KEYSTORE,"etc/crowd-ldap-server.keystore");
