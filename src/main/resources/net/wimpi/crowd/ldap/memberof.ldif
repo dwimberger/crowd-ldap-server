@@ -1,0 +1,12 @@
+version: 1
+dn: m-oid=1.2.840.113556.1.2.102,ou=attributeTypes,cn=other,ou=schema
+m-usage: USER_APPLICATIONS
+m-equality: distinguishedNameMatch
+objectClass: metaAttributeType
+objectClass: metaTop
+objectClass: top
+m-name: memberOf
+m-oid: 1.2.840.113556.1.2.102
+m-obsolete: FALSE
+m-noUserModification: FALSE
+m-syntax: 1.3.6.1.4.1.1466.115.121.1.12
