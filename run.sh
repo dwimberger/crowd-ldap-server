@@ -10,4 +10,3 @@ DEBUG_SSL=
 
 # Run Server
 java $FIXADS $DEBUG_SSL -cp etc -jar $JAR $*
-

@@ -373,8 +373,7 @@ public class CrowdPartition implements Partition {
       }
     }
     return groupEntry;
-  }//createUserEntry
-
+  }//createGroupEntry
 
   public ClonedServerEntry lookup(LookupOperationContext ctx) {
     DN dn = ctx.getDn();
@@ -466,7 +465,6 @@ public class CrowdPartition implements Partition {
       //Retrieve Filter
       String filter = ctx.getFilter().toString();
       if (filter.contains("(2.5.4.0=*)") ||  filter.contains("(2.5.4.0=referral)")) {
-
 
         Matcher m = m_UIDFilter.matcher(filter);
         String uid = "";
