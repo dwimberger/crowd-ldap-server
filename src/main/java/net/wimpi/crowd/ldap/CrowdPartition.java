@@ -65,6 +65,7 @@ public class CrowdPartition implements Partition {
   private Pattern m_UIDFilter = Pattern.compile("\\(0.9.2342.19200300.100.1.1=([^\\)]*)\\)");
   //AD memberOf Emulation
   private boolean m_emulateADmemberOf = false;
+  private boolean m_includeNested = false;
 
   public CrowdPartition(CrowdClient client) {
     m_CrowdClient = client;
@@ -72,11 +73,12 @@ public class CrowdPartition implements Partition {
     m_Initialized = new AtomicBoolean(false);
   }//constructor
 
-  public CrowdPartition(CrowdClient client, boolean emulateADMemberOf) {
+  public CrowdPartition(CrowdClient client, boolean emulateADMemberOf, boolean includeNested) {
     m_CrowdClient = client;
     m_EntryCache = new LRUCacheMap<String, ServerEntry>(300);
     m_Initialized = new AtomicBoolean(false);
     m_emulateADmemberOf = emulateADMemberOf;
+    m_includeNested = includeNested;
   }//constructor
 
   public void initialize() throws Exception {
@@ -332,7 +334,16 @@ public class CrowdPartition implements Partition {
           		DN mdn = new DN(String.format("cn=%s,%s", g, CROWD_GROUPS_DN));
           		userEntry.add("memberof", mdn.getName());
         	}
-        }
+        	if(m_includeNested) {
+        		//groups
+    	    	groups = m_CrowdClient.getNamesOfGroupsForNestedUser(user, 0, Integer.MAX_VALUE); 
+        		for (String g : groups) {
+          			DN mdn = new DN(String.format("cn=%s,%s", g, CROWD_GROUPS_DN));
+          			userEntry.add("memberof", mdn.getName());
+        		}
+        	}
+        }    
+            
 
         log.debug(userEntry.toString());
 

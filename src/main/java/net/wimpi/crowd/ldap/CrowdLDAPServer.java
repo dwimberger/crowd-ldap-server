@@ -81,6 +81,7 @@ public class CrowdLDAPServer {
   private CrowdClient m_CrowdClient;
   //AD memberOf Emulation
   private boolean m_emulateADmemberOf = false;
+  private boolean m_includeNested = false;
  
   /**
    * Creates a new instance of the CrowdLDAPServer.
@@ -95,6 +96,8 @@ public class CrowdLDAPServer {
     try {
       m_ServerConfig = serverConfig;
       m_emulateADmemberOf = Boolean.parseBoolean(m_ServerConfig.getProperty(CONFIG_KEY_EMULATE_MEMBEROF, "false"));
+	  m_includeNested = Boolean.parseBoolean(m_ServerConfig.getProperty(CONFIG_KEY_INCLUDE_NESTED, "false"));
+
       log.debug(c_ResourceBundle.getString("loading.configuration"));
       m_CrowdConfig = new Properties();
       File f = new File(confDir, "crowd.properties");
@@ -150,7 +153,7 @@ public class CrowdLDAPServer {
    */
   private Partition addCrowdPartition(String partitionId, String partitionDn) throws Exception {
     // Create a new partition named 'foo'.
-    CrowdPartition partition = new CrowdPartition(m_CrowdClient, m_emulateADmemberOf);
+    CrowdPartition partition = new CrowdPartition(m_CrowdClient, m_emulateADmemberOf, m_includeNested);
     partition.setId(partitionId);
     partition.setSuffix(partitionDn);
     partition.setSchemaManager(service.getSchemaManager());
@@ -368,5 +371,6 @@ public class CrowdLDAPServer {
   private static final String CONFIG_KEY_CERTIFICATEPASSWD = "ssl.certificate.password";
   
   private static final String CONFIG_KEY_EMULATE_MEMBEROF = "emulate.ad.memberof";  
+  private static final String CONFIG_KEY_INCLUDE_NESTED = "emulate.ad.include.nested";  
 
 }//class CrowdLDAPServer
