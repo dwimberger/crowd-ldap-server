@@ -1,5 +1,6 @@
 package net.wimpi.crowd.ldap;
 
+import com.atlassian.crowd.embedded.api.SearchRestriction;
 import com.atlassian.crowd.exception.ApplicationPermissionException;
 import com.atlassian.crowd.exception.InvalidAuthenticationException;
 import com.atlassian.crowd.exception.OperationFailedException;
@@ -7,6 +8,7 @@ import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.model.group.Group;
 import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.search.query.entity.restriction.MatchMode;
+import com.atlassian.crowd.search.query.entity.restriction.NullRestrictionImpl;
 import com.atlassian.crowd.search.query.entity.restriction.TermRestriction;
 import com.atlassian.crowd.search.query.entity.restriction.constants.GroupTermKeys;
 import com.atlassian.crowd.search.query.entity.restriction.constants.UserTermKeys;
@@ -417,7 +419,7 @@ public class CrowdPartition implements Partition {
     String dnName = dn.getName();
     ServerEntry se = ctx.getEntry();
 
-    log.debug("findObject()::dn=" + dn.getName() + "::entry=" + se.toString());
+    log.debug("findObject()::dn=" + dnName + "::entry=" + se.toString());
 
     //1. Try cache
     se = m_EntryCache.get(dn.getName());
@@ -456,7 +458,7 @@ public class CrowdPartition implements Partition {
 
         List<ServerEntry> l = new ArrayList<ServerEntry>();
         try {
-          TermRestriction groupName = new TermRestriction(GroupTermKeys.NAME, MatchMode.CONTAINS, "");
+          TermRestriction<String> groupName = new TermRestriction<String>(GroupTermKeys.NAME, MatchMode.CONTAINS, "");
           List<String> list = m_CrowdClient.searchGroupNames(groupName, 0, Integer.MAX_VALUE);
           for (String gn : list) {
             DN gdn = new DN(String.format("dn=%s,%s", gn, CROWD_GROUPS_DN));
@@ -487,7 +489,14 @@ public class CrowdPartition implements Partition {
 
         List<ServerEntry> l = new ArrayList<ServerEntry>();
         try {
-          TermRestriction userName = new TermRestriction(UserTermKeys.USERNAME, MatchMode.CONTAINS, uid);
+          SearchRestriction userName = null;
+          if ("*".equals(uid)) {
+              // Contains * term restriction does not return any users, so use null one
+              userName = NullRestrictionImpl.INSTANCE;
+              
+          } else {
+              userName = new TermRestriction<String>(UserTermKeys.USERNAME, MatchMode.CONTAINS, uid);
+          }
           List<String> list = m_CrowdClient.searchUserNames(userName, 0, Integer.MAX_VALUE);
           for (String gn : list) {
             DN udn = new DN(String.format("dn=%s,%s", gn, CROWD_USERS_DN));
