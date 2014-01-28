@@ -65,6 +65,7 @@ public class CrowdPartition implements Partition {
 
   private List<ServerEntry> m_CrowdOneLevelList;
   private Pattern m_UIDFilter = Pattern.compile("\\(0.9.2342.19200300.100.1.1=([^\\)]*)\\)");
+  private Pattern m_MemberFilter = Pattern.compile("\\(2.5.4.31=([^\\)]*)\\)");
   //AD memberOf Emulation
   private boolean m_emulateADmemberOf = false;
   private boolean m_includeNested = false;
@@ -454,7 +455,8 @@ public class CrowdPartition implements Partition {
     //2. Groups
     if (dn.getName().equals(m_CrowdGroupsEntry.getDn().getName())) {
       //Retrieve Filter
-      if (ctx.getFilter().toString().contains("(2.5.4.0=*)")) {
+      String filter = ctx.getFilter().toString();
+      if (filter.toString().contains("(2.5.4.0=*)")) {
 
         List<ServerEntry> l = new ArrayList<ServerEntry>();
         try {
@@ -462,6 +464,26 @@ public class CrowdPartition implements Partition {
           List<String> list = m_CrowdClient.searchGroupNames(groupName, 0, Integer.MAX_VALUE);
           for (String gn : list) {
             DN gdn = new DN(String.format("dn=%s,%s", gn, CROWD_GROUPS_DN));
+            l.add(createGroupEntry(gdn));
+          }
+        } catch (Exception ex) {
+          log.error("findOneLevel()", ex);
+        }
+        return new BaseEntryFilteringCursor(
+            new ListCursor<ServerEntry>(l),
+            ctx
+        );
+      } else if (filter.toString().contains("(2.5.4.31=")) {
+        Matcher m = m_MemberFilter.matcher(filter);
+        String member = "";
+        List<ServerEntry> l = new ArrayList<ServerEntry>();
+        try {
+          if (m.find()) {
+            member=new DN(m.group(1)).getRdn().getNormValue();
+          }
+          List<Group> list = m_CrowdClient.getGroupsForUser(member, 0, Integer.MAX_VALUE);
+          for (Group g : list) {
+            DN gdn = new DN(String.format("dn=%s,%s", g.getName(), CROWD_GROUPS_DN));
             l.add(createGroupEntry(gdn));
           }
         } catch (Exception ex) {
