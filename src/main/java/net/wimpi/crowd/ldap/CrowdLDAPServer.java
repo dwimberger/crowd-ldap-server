@@ -232,33 +232,31 @@ public class CrowdLDAPServer {
     }
     
     File attributeTypesDir = new File(workingDirectory, "schema/ou=schema/cn=other/ou=attributetypes");
-	if(!attributeTypesDir.exists()) {
-    	if(attributeTypesDir.mkdirs()) {
-	    	File sambaLDIF = new File(attributeTypesDir, "m-oid=1.2.840.113556.1.2.103.ldif");
-	    	if(!sambaLDIF.exists()) {		    				    		
-	    		InputStream in = null;
-					OutputStream out = null;
-				try {
-						in = getClass().getClassLoader().getResourceAsStream("net/wimpi/crowd/ldap/samba.ldif");
-						out = new FileOutputStream(sambaLDIF);
+	attributeTypesDir.mkdirs();
+	File sambaLDIF = new File(attributeTypesDir, "m-oid=1.2.840.113556.1.2.103.ldif");
+	if(!sambaLDIF.exists()) {		    				    		
+		InputStream in = null;
+			OutputStream out = null;
+		try {
+				in = getClass().getClassLoader().getResourceAsStream("net/wimpi/crowd/ldap/samba.ldif");
+				out = new FileOutputStream(sambaLDIF);
 
-						// Transfer bytes from in to out
-						byte[] buf = new byte[1024];
-						int len;
-						while ((len = in.read(buf)) > 0) {
-							out.write(buf, 0, len);
-						}
-					} finally {
-						if(in != null) {
-							in.close();
-						}
-						if(out != null) {
-							out.close();
-						}
+				// Transfer bytes from in to out
+				byte[] buf = new byte[1024];
+				int len;
+				while ((len = in.read(buf)) > 0) {
+					out.write(buf, 0, len);
 				}
-			}
-	    }
+			} finally {
+				if(in != null) {
+					in.close();
+				}
+				if(out != null) {
+					out.close();
+				}
+		}
 	}
+    
         
     schemaPartition.setWrappedPartition(ldifPartition);
 
