@@ -327,6 +327,7 @@ public class CrowdPartition implements Partition {
         userEntry.put("givenname", u.getFirstName());
         userEntry.put(SchemaConstants.SN_AT, u.getLastName());
         userEntry.put(SchemaConstants.OU_AT, "users");
+        userEntry.put("sAMAccountName", user);
 
 		//Note: Emulate AD memberof attribute 
         if(m_emulateADmemberOf) {
