@@ -102,6 +102,8 @@ public class CrowdLDAPServer {
       m_CrowdConfig = new Properties();
       File f = new File(confDir, "crowd.properties");
       m_CrowdConfig.load(new FileReader(f));
+      // System properties can override
+      m_CrowdConfig.putAll(System.getProperties());
       initCrowdClient();
     } catch (Exception ex) {
       log.error("CrowdLDAPServer(File,File)", ex);
@@ -346,6 +348,8 @@ public class CrowdLDAPServer {
       Properties serverConfig = new Properties();
       File f2 = new File(confDir, "crowd-ldap-server.properties");
       serverConfig.load(new FileReader(f2));
+      // System properties can override
+      serverConfig.putAll(System.getProperties());
 
       log.info(c_ResourceBundle.getString("starting.up.crowdldap.server"));
       File workDir = new File("work");
