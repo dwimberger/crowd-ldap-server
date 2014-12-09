@@ -24,5 +24,5 @@ fi
 
 
 # Run Server
-java $CROWD $FIXADS $DEBUG_SSL -cp etc -jar $JAR $*
+exec java $CROWD $FIXADS $DEBUG_SSL -cp etc -jar $JAR $*
 
