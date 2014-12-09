@@ -11,8 +11,12 @@ which is distributed under the [Apache License v2.0](http://www.apache.org/licen
 
 ## License
 
-This application is licenced under the [Apache License v2.0](LICENSE.txt).
+[Crowd LDAP Server Bundle](https://github.com/dwimberger/crowd-ldap-server) is
+licenced under the [Apache License v2.0](LICENSE.txt).
 
+Copyright 2012 [Dieter Wimberger](http://dieter.wimpi.net)
+
+See [NOTICE.txt](NOTICE.txt) for details.  
 
 ## Building
 
@@ -53,15 +57,19 @@ or on Windows:
 
 ## Docker image
 
-This application is also available as an [Docker](https://www.docker.com/) image.
+This application is also available as an [Docker](https://www.docker.com/) image
+[stain/crowd-ldap-server](https://registry.hub.docker.com/u/stain/crowd-ldap-server/).
 
-To build the Docker image:
+    docker pull stain/crowd-ldap-server
+
+To instead build the Docker image from this source:
 
     docker build -t crowd-ldap-server .
 
+
 To run the image you will need to expose the port `10389` and specify the environment variables:
     
-    docker run -p 10389:10389 -e CROWD_URL=http://crowd.example.com:8095/crowd -e CROWD_APP_PW s3cret crowd-ldap-server 
+    docker run -p 10389:10389 -e CROWD_URL=http://crowd.example.com:8095/crowd -e CROWD_APP_PW s3cret stain/crowd-ldap-server 
 
 The default variables are:
 
@@ -93,5 +101,6 @@ To determine the IP address range, try
 
 Finally start the `crowd-ldap-server` container:
 
-    docker run --link crowd:crowd -p 10389:10389 -e CROWD_APP_PW s3cret crowd-ldap-server
+    docker run --link crowd:crowd -p 10389:10389 -e CROWD_APP_PW s3cret stain/crowd-ldap-server
+ 
 
