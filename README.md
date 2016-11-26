@@ -7,3 +7,4 @@ This service allows your favourite SSO authentication source to be used from man
 
 The LDAP implementation is based on the Apache Directory Server v1.5.7,  which is distributed under the Apache v2.0 License.
 
+To build the jar file, install Apache Maven and run 'mvn package'.

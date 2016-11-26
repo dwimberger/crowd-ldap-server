@@ -201,34 +201,34 @@ public class CrowdLDAPServer {
 
     // memberOf Support
     if(m_emulateADmemberOf) {
-    	File attributeTypesDir = new File(workingDirectory, "schema/ou=schema/cn=other/ou=attributetypes");
-    	if(!attributeTypesDir.exists()) {
-	    	if(attributeTypesDir.mkdirs()) {
-		    	File memberOfLDIF = new File(attributeTypesDir, "m-oid=1.2.840.113556.1.2.102.ldif");
-		    	if(!memberOfLDIF.exists()) {		    				    		
-		    		InputStream in = null;
- 					OutputStream out = null;
-					try {
-  						in = getClass().getClassLoader().getResourceAsStream("net/wimpi/crowd/ldap/memberof.ldif");
-  						out = new FileOutputStream(memberOfLDIF);
+      File attributeTypesDir = new File(workingDirectory, "schema/ou=schema/cn=other/ou=attributetypes");
+      if(!attributeTypesDir.exists()) {
+	    if(attributeTypesDir.mkdirs()) {
+          File memberOfLDIF = new File(attributeTypesDir, "m-oid=1.2.840.113556.1.2.102.ldif");
+          if(!memberOfLDIF.exists()) {		    				    		
+            InputStream in = null;
+            OutputStream out = null;
+            try {
+              in = getClass().getClassLoader().getResourceAsStream("net/wimpi/crowd/ldap/memberof.ldif");
+              out = new FileOutputStream(memberOfLDIF);
     
-  						// Transfer bytes from in to out
-  						byte[] buf = new byte[1024];
-  						int len;
-  						while ((len = in.read(buf)) > 0) {
-   							out.write(buf, 0, len);
-  						}
- 					} finally {
- 						if(in != null) {
-   							in.close();
-   						}
-   						if(out != null) {
-   							out.close();
-   						}
-					}
-				}
-		    }
-    	}
+              // Transfer bytes from in to out
+              byte[] buf = new byte[1024];
+              int len;
+              while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+              }
+            } finally {
+              if(in != null) {
+                in.close();
+              }
+              if(out != null) {
+                out.close();
+              }
+            }
+          }
+        }
+      }
     }
         
     schemaPartition.setWrappedPartition(ldifPartition);
