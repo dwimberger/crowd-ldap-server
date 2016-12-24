@@ -100,7 +100,7 @@ public class CrowdLDAPServer {
 
       log.debug(c_ResourceBundle.getString("loading.configuration"));
       m_CrowdConfig = new Properties();
-      File f = new File(confDir, "crowd.properties");
+      File f = new File(confDir, "crowd-ldap-application.properties");
       m_CrowdConfig.load(new FileReader(f));
       initCrowdClient();
     } catch (Exception ex) {
@@ -301,8 +301,9 @@ public class CrowdLDAPServer {
   public void startServer() throws Exception {
     server = new LdapServer();
     int serverPort = Integer.parseInt(m_ServerConfig.getProperty(CONFIG_KEY_PORT,"10389"));
-
-    Transport t = new TcpTransport(serverPort);
+    String serverAddress = m_ServerConfig.getProperty(CONFIG_KEY_LISTEN_ADDRESS,"127.0.0.1");
+	  
+    Transport t = new TcpTransport(serverAddress,serverPort);
 
     //SSL Support
     boolean sslEnabled = Boolean.parseBoolean(m_ServerConfig.getProperty(CONFIG_KEY_SSLENABLE,"false"));
@@ -365,6 +366,7 @@ public class CrowdLDAPServer {
 
 
   private static final String CONFIG_KEY_PORT = "listener.port";
+  private static final String CONFIG_KEY_LISTEN_ADDRESS = "listener.address";
   private static final String CONFIG_KEY_SSLENABLE = "ssl.enabled";
 
   private static final String CONFIG_KEY_KEYSTORE = "ssl.keystore";
