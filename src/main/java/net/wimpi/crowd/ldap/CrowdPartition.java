@@ -377,7 +377,7 @@ public class CrowdPartition implements Partition {
         groupEntry.put("description", g.getDescription());
 
         for (String u : users) {
-          DN mdn = new DN(String.format("dn=%s,%s", u, CROWD_USERS_DN));
+          DN mdn = new DN(String.format("cn=%s,%s", u, CROWD_USERS_DN));
           groupEntry.add(SchemaConstants.MEMBER_AT, mdn.getName());
         }
         m_EntryCache.put(dn.getName(), groupEntry);
@@ -461,7 +461,7 @@ public class CrowdPartition implements Partition {
           TermRestriction<String> groupName = new TermRestriction<String>(GroupTermKeys.NAME, MatchMode.CONTAINS, "");
           List<String> list = m_CrowdClient.searchGroupNames(groupName, 0, Integer.MAX_VALUE);
           for (String gn : list) {
-            DN gdn = new DN(String.format("dn=%s,%s", gn, CROWD_GROUPS_DN));
+            DN gdn = new DN(String.format("cn=%s,%s", gn, CROWD_GROUPS_DN));
             l.add(createGroupEntry(gdn));
           }
         } catch (Exception ex) {
@@ -499,7 +499,7 @@ public class CrowdPartition implements Partition {
           }
           List<String> list = m_CrowdClient.searchUserNames(userName, 0, Integer.MAX_VALUE);
           for (String gn : list) {
-            DN udn = new DN(String.format("dn=%s,%s", gn, CROWD_USERS_DN));
+            DN udn = new DN(String.format("cn=%s,%s", gn, CROWD_USERS_DN));
             l.add(createUserEntry(udn));
           }
         } catch (Exception ex) {
