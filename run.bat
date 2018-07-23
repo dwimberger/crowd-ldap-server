@@ -1,5 +1,5 @@
 @echo off
-set JAR=lib\crowd-ldap-server-1.0.1-SNAPSHOT.jar
+set JAR=lib\crowd-ldap-server-1.0.4-SNAPSHOT.jar
 set CLASSPATH=etc
 rem Apache DS Settings
 set FIXADS="-Duser.language=en -Duser.country=US"

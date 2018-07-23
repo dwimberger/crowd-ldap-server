@@ -4,16 +4,16 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.wimpi.crowd.ldap</groupId>
     <artifactId>crowd-ldap-server</artifactId>
-    <version>1.0.4-SNAPSHOT</version>
+    <version>2.0.0</version>
     <packaging>jar</packaging>
 
     <name>Crowd-LDAP-Server</name>
-    <url>http://dieter.wimpi.net/</url>
+    <url>https://github.com/OneB1t/crowd-ldap-server.git</url>
     <description>LDAP Server Bridge for Crowd</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <slf4j-version>1.6.6</slf4j-version>
+        <slf4j-version>1.7.21</slf4j-version>
     </properties>
 
     <dependencies>
@@ -30,19 +30,17 @@
         <dependency>
             <groupId>org.apache.directory.server</groupId>
             <artifactId>apacheds-all</artifactId>
-            <version>1.5.7</version>
-            <exclusions>
-                <!-- shared-ldap-schema module needs to be excluded to avoid multiple schema resources on the classpath-->
-                <exclusion>
-                    <groupId>org.apache.directory.shared</groupId>
-                    <artifactId>shared-ldap-schema</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>2.0.0-M23</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.2</version>
         </dependency>
         <dependency>
             <groupId>com.atlassian.crowd</groupId>
             <artifactId>crowd-integration-client-rest</artifactId>
-            <version>2.3.6</version>
+            <version>2.9.1</version>
         </dependency>
     </dependencies>
 
@@ -64,6 +62,16 @@
                     <artifactId>maven-shade-plugin</artifactId>
                     <version>1.7.1</version>
                     <configuration>
+                        <filters>
+                            <filter>
+                                <artifact>*:*</artifact>
+                                <excludes>
+                                    <exclude>META-INF/*.SF</exclude>
+                                    <exclude>META-INF/*.DSA</exclude>
+                                    <exclude>META-INF/*.RSA</exclude>
+                                </excludes>
+                            </filter>
+                        </filters>
                         <!-- put your configurations here -->
                         <transformers>
                             <transformer
